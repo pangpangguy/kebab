@@ -1,18 +1,8 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>KebabSeeker</title>
-</head>
-<body>
-    <h1>All Kebabs!</h1>
-    <ul>  
-    <% for (let kebab of allKebabs){ %>
-        <li><a href="/kebabs/<%=kebab._id %>"><%=kebab.name%></a></li> 
-    <% } %> 
-    </ul>
-    <a href="/kebabs/new">Create new Kebab</a>
-</body>
-</html>
+<% layout('layouts/boilerplate.ejs') %>
+<h1>All Kebabs!</h1>
+<ul>
+  <% for (let kebab of allKebabs){ %>
+  <li><a href="/kebabs/<%=kebab._id %>"><%=kebab.name%></a></li>
+  <% } %>
+</ul>
+<a href="/kebabs/new">Create new Kebab</a>
