@@ -1,9 +1,44 @@
 <% layout('layouts/boilerplate') %>
-<form action="/kebabs" method="post">
-  <label for="name">Name:</label>
-  <input type="text" name="kebab[name]" id="name" />
-  <label for="location">Location:</label>
-  <input type="text" name="kebab[location]" id="location" />
-  <button>Submit</button>
-</form>
-<a href="/kebabs">Return</a>
+
+<div class="row">
+  <h1 class="text-center">New Kebab</h1>
+  <div class="col-6 offset-3">
+    <form action="/kebabs" method="post">
+      <div class="mb-3">
+        <label for="name">Name:</label>
+        <input class="form-control" type="text" name="kebab[name]" id="name" required />
+      </div>
+
+      <div class="mb-3">
+        <label for="location">Location:</label>
+        <input class="form-control" type="text" name="kebab[location]" id="location" required />
+      </div>
+
+      <div class="mb-3">
+        <label for="image">Image Url:</label>
+        <input class="form-control" type="text" name="kebab[image]" id="image" />
+      </div>
+
+      <div class="mb-3">
+        <label for="description">Description:</label>
+        <textarea class="form-control" type="text" name="kebab[description]" id="description"></textarea>
+      </div>
+
+      <div class="input-group mb-3">
+        <div class="input-group-prepend">
+          <span class="input-group-text">€</span>
+        </div>
+        <input
+          type="text"
+          class="form-control"
+          aria-label="Amount (to the nearest dollar)"
+          placeholder="0.00"
+          name="kebab[price]"
+        />
+      </div>
+
+      <button class="btn btn-primary">Submit</button>
+    </form>
+    <a href="/kebabs">Return</a>
+  </div>
+</div>

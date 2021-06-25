@@ -2,11 +2,12 @@
 <body>
   <h1><%= kebab.name %></h1>
   <h2><%= kebab.location %></h2>
-  <img src="<%= kebab.image %> " alt="" />
-  <a href="/kebabs">Return</a>
-  <a href="/kebabs/<%= kebab._id %>/edit ">Edit</a>
-
+  <h2><%= kebab.price%>€</h2>
+  <img src="<%= kebab.image %> " alt="" class="img-fluid" />
+  <p><%=kebab.description%></p>
+  <a href="/kebabs/<%= kebab._id %>/edit " class="btn btn-success">Edit</a>
   <form method="post" action="/kebabs/<%= kebab._id %>?_method=DELETE">
-    <button>Delete kebab</button>
+    <button class="btn btn-danger">Delete kebab</button>
   </form>
+  <a href="/kebabs">Return</a>
 </body>

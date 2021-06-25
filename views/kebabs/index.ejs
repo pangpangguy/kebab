@@ -2,7 +2,21 @@
 <h1>All Kebabs!</h1>
 <ul>
   <% for (let kebab of allKebabs){ %>
-  <li><a href="/kebabs/<%=kebab._id %>"><%=kebab.name%></a></li>
+  <div class="card mb-3">
+    <div class="row">
+      <div class="col-md-4">
+        <img src="<%= kebab.image %> " alt="" class="img-fluid" />
+      </div>
+      <div class="col-md-8">
+        <div class="card-body"></div>
+          <h5 class="card-title"><%= kebab.name %></h5>
+          <p class="card-title text-muted"><%=kebab.location %> </p>
+          <p class="card-text"> <%=kebab.description%></p>
+          <a href="/kebabs/<%= kebab._id%>" class='btn btn-primary'>View Kebab</a>
+        </div>
+      </div>
+    </div>
+  </div>
   <% } %>
 </ul>
 <a href="/kebabs/new">Create new Kebab</a>
