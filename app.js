@@ -3,6 +3,7 @@ const mongoose = require("mongoose");
 const path = require("path");
 const Kebab = require("./models/kebab");
 const methodOverride = require("method-override");
+const ejsMate = require("ejs-mate");
 
 //Database
 mongoose.connect("mongodb://localhost:27017/kebab-camp", {
@@ -19,12 +20,17 @@ db.once("open", () => {
 
 //The app
 const app = express();
+
+//use ejs-mate as ejs engine instead of default
+app.engine("ejs", ejsMate);
+
 app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "views"));
 
 app.use(express.urlencoded({ extended: true }));
 app.use(methodOverride("_method"));
 
+//HTTP Requests
 app.get("/", (req, res) => {
   res.render("home");
 });

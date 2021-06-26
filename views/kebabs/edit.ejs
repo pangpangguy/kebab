@@ -1,18 +1,53 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-</head>
-<body>
-    <form action="/kebabs/<%= kebab._id %>?_method=PUT" method="post">
-    <label for="name">Name:</label>
-    <input type="text" name="kebab[name]" id="name" value="<%= kebab.name %>">
-    <label for="location">Location:</label>
-    <input type="text" name="kebab[location]" id="location" value="<%=kebab.location%>" >
-    <button>Submit Change</button>
-    </form>   
-</body>
-</html>
+<% layout('layouts/boilerplate.ejs') %>
+<div class="row">
+  <h1 class="text-center">Edit Kebab</h1>
+  <div class="col-6 offset-3">
+    <form action="/kebabs/<%= kebab._id %>?_method=PUT " method="post">
+      <div class="mb-3">
+        <label for="name">Name:</label>
+        <input class="form-control" type="text" name="kebab[name]" id="name" required value="<%=kebab.name%>" />
+      </div>
+
+      <div class="mb-3">
+        <label for="location">Location:</label>
+        <input
+          class="form-control"
+          type="text"
+          name="kebab[location]"
+          id="location"
+          required
+          value="<%=kebab.location %>"
+        />
+      </div>
+
+      <div class="mb-3">
+        <label for="image">Image Url:</label>
+        <input class="form-control" type="text" name="kebab[image]" id="image" value="<%=kebab.image %>" />
+      </div>
+
+      <div class="mb-3">
+        <label for="description">Description:</label>
+        <textarea class="form-control" type="text" name="kebab[description]" id="description">
+<%=kebab.description%></textarea
+        >
+      </div>
+
+      <div class="input-group mb-3">
+        <div class="input-group-prepend">
+          <span class="input-group-text">€</span>
+        </div>
+        <input
+          type="text"
+          class="form-control"
+          aria-label="Amount (to the nearest dollar)"
+          placeholder="0.00"
+          value="<%=kebab.price %>"
+          name="kebab[price]"
+        />
+      </div>
+
+      <button class="btn btn-info">Submit Changes</button>
+    </form>
+    <a href="/kebabs">Return</a>
+  </div>
+</div>
