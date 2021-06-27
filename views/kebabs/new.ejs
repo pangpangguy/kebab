@@ -3,25 +3,29 @@
 <div class="row">
   <h1 class="text-center">New Kebab</h1>
   <div class="col-6 offset-3">
-    <form action="/kebabs" method="post">
+    <form action="/kebabs" method="post" novalidate class="needs-validation">
       <div class="mb-3">
         <label for="name">Name:</label>
         <input class="form-control" type="text" name="kebab[name]" id="name" required />
+        <div class="valid-feedback">Looks good!</div>
       </div>
 
       <div class="mb-3">
         <label for="location">Location:</label>
         <input class="form-control" type="text" name="kebab[location]" id="location" required />
+        <div class="valid-feedback">Looks good!</div>
       </div>
 
       <div class="mb-3">
         <label for="image">Image Url:</label>
-        <input class="form-control" type="text" name="kebab[image]" id="image" />
+        <input class="form-control" type="text" name="kebab[image]" id="image" required />
+        <div class="valid-feedback">Looks good!</div>
       </div>
 
       <div class="mb-3">
         <label for="description">Description:</label>
-        <textarea class="form-control" type="text" name="kebab[description]" id="description"></textarea>
+        <textarea class="form-control" type="text" name="kebab[description]" id="description" required></textarea>
+        <div class="valid-feedback">Looks good!</div>
       </div>
 
       <div class="input-group mb-3">
@@ -34,7 +38,9 @@
           aria-label="Amount (to the nearest dollar)"
           placeholder="0.00"
           name="kebab[price]"
+          required
         />
+        <div class="valid-feedback">Looks good!</div>
       </div>
 
       <button class="btn btn-primary">Submit</button>

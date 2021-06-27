@@ -2,10 +2,11 @@
 <div class="row">
   <h1 class="text-center">Edit Kebab</h1>
   <div class="col-6 offset-3">
-    <form action="/kebabs/<%= kebab._id %>?_method=PUT " method="post">
+    <form action="/kebabs/<%= kebab._id %>?_method=PUT " method="post" novalidate class="needs-validation">
       <div class="mb-3">
         <label for="name">Name:</label>
         <input class="form-control" type="text" name="kebab[name]" id="name" required value="<%=kebab.name%>" />
+        <div class="valid-feedback">Looks good!</div>
       </div>
 
       <div class="mb-3">
@@ -18,11 +19,13 @@
           required
           value="<%=kebab.location %>"
         />
+        <div class="valid-feedback">Looks good!</div>
       </div>
 
       <div class="mb-3">
         <label for="image">Image Url:</label>
         <input class="form-control" type="text" name="kebab[image]" id="image" value="<%=kebab.image %>" />
+        <div class="valid-feedback">Looks good!</div>
       </div>
 
       <div class="mb-3">
@@ -30,6 +33,7 @@
         <textarea class="form-control" type="text" name="kebab[description]" id="description">
 <%=kebab.description%></textarea
         >
+        <div class="valid-feedback">Looks good!</div>
       </div>
 
       <div class="input-group mb-3">
@@ -44,6 +48,7 @@
           value="<%=kebab.price %>"
           name="kebab[price]"
         />
+        <div class="valid-feedback">Looks good!</div>
       </div>
 
       <button class="btn btn-info">Submit Changes</button>
