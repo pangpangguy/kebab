@@ -21,7 +21,7 @@ db.once("open", () => {
   console.log("Kebab database connected");
 });
 
-//The app
+//The app initialization
 const app = express();
 
 //use ejs-mate as ejs engine instead of default
