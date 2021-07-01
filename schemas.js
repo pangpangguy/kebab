@@ -11,3 +11,12 @@ const kebabSchema = Joi.object({
 });
 
 module.exports.kebabSchema = kebabSchema;
+
+const reviewSchema = Joi.object({
+  review: Joi.object({
+    body: Joi.string().required(),
+    rating: Joi.number().required().min(0).max(5),
+  }).required(),
+});
+
+module.exports.reviewSchema = reviewSchema;

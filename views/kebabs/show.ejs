@@ -1,13 +1,54 @@
 <% layout('layouts/boilerplate.ejs') %>
 <body>
-  <h1><%= kebab.name %></h1>
-  <h2><%= kebab.location %></h2>
-  <h2><%= kebab.price%>€</h2>
-  <img src="<%= kebab.image %> " alt="" class="img-fluid" />
-  <p><%=kebab.description%></p>
-  <a href="/kebabs/<%= kebab._id %>/edit " class="btn btn-success">Edit</a>
-  <form method="post" action="/kebabs/<%= kebab._id %>?_method=DELETE">
-    <button class="btn btn-danger">Delete kebab</button>
-  </form>
-  <a href="/kebabs">Return</a>
+  <div class="row">
+    <div class="col-6">
+      <div class="card">
+        <img src="<%= kebab.image %> " alt="" class="img-fluid" />
+        <div class="card-body">
+          <h5 class="card-title"><%= kebab.name %></h5>
+          <p class="card-text"><%= kebab.description %></p>
+        </div>
+        <ul class="list-group list-group-flush">
+          <li class="list-group-item text-muted"><%= kebab.location %></li>
+          <li class="list-group-item"><%= kebab.price %>€ for standard kebab</li>
+        </ul>
+        <div class="card-body">
+          <a href="/kebabs" class="btn btn-primary card-link">Return</a>
+          <form method="post" class="d-inline" action="/kebabs/<%= kebab._id %>?_method=DELETE">
+            <button class="btn btn-danger card-link">Delete kebab</button>
+          </form>
+        </div>
+      </div>
+      <div class="card-footer text-muted">Last reviewed 5 days ago</div>
+    </div>
+    <div class="col-6">
+      <form action="/kebabs/<%= kebab._id %>/reviews" novalidate class="mt-3 needs-validation" method="post">
+        <h2>Leave a review:</h2>
+        <div class="mb-3">
+          <label for="rating" class="form-label">Rating:</label>
+          <input type="range" class="form-range" min="0" max="5" step="1" id="rating" name="review[rating]" required />
+        </div>
+        <div class="mb-3">
+          <label for="body">Review:</label>
+          <textarea class="form-control" name="review[body]" id="body" cols="3" rows="3" required></textarea>
+          <div class="valid-feedback">Looks good!</div>
+        </div>
+        <button class="btn btn-success">Submit</button>
+      </form>
+      <div>
+        <h2>Reviews</h2>
+        <% for (let rev of kebab.reviews){ %>
+        <div class="card mb-3">
+          <div class="card-body">
+            <h5>Rating : <%=rev.rating %></h5>
+            <p><%= rev.body %></p>
+            <form action="/kebabs/<%= kebab._id%>/reviews/<%= rev._id%>?_method=DELETE" method="post">
+              <button class="btn btn-danger">Delete</button>
+            </form>
+          </div>
+        </div>
+        <% } %>
+      </div>
+    </div>
+  </div>
 </body>

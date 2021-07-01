@@ -6,7 +6,8 @@ const methodOverride = require("method-override");
 const ejsMate = require("ejs-mate");
 const catchAsync = require("./utils/catchAsync");
 const ExpressError = require("./utils/ExpressError");
-const { kebabSchema } = require("./schemas.js");
+const { kebabSchema, reviewSchema } = require("./schemas.js");
+const Review = require("./models/review");
 
 //Database
 mongoose.connect("mongodb://localhost:27017/kebab-camp", {
@@ -46,6 +47,16 @@ const validateKebab = (req, res, next) => {
   }
 };
 
+const validateReview = (req, res, next) => {
+  const { error } = reviewSchema.validate(req.body);
+  if (error) {
+    const errorMessage = validationError.error.details.map((el) => el.message).join(",");
+    throw new ExpressError(errorMessage, 400);
+  } else {
+    next();
+  }
+};
+
 //HTTP Requests
 app.get("/", (req, res) => {
   res.render("home");
@@ -64,7 +75,7 @@ app.get(
   "/kebabs/:id",
   catchAsync(async (req, res) => {
     const { id } = req.params;
-    const kebab = await Kebab.findById(id);
+    const kebab = await Kebab.findById(id).populate("reviews");
     res.render("kebabs/show", { kebab });
   })
 );
@@ -107,6 +118,32 @@ app.delete(
     const { id } = req.params;
     await Kebab.findByIdAndDelete(id);
     res.redirect("/kebabs");
+  })
+);
+
+//Reviews
+app.post(
+  "/kebabs/:id/reviews",
+  catchAsync(async (req, res) => {
+    const { id } = req.params;
+    const review = new Review(req.body.review);
+    const kebab = await Kebab.findById(id);
+    kebab.reviews.push(review);
+    await review.save();
+    await kebab.save();
+    res.redirect(`/kebabs/${id}`);
+  })
+);
+
+app.delete(
+  "/kebabs/:id/reviews/:reviewId",
+  catchAsync(async (req, res) => {
+    const { id, reviewId } = req.params;
+    //$pull : {x: y}
+    //Pull all elements from x that matches y
+    await Kebab.findByIdAndUpdate(id, { $pull: { reviews: reviewId } });
+    await Review.findByIdAndDelete(reviewId);
+    res.redirect(`/kebabs/${id}`);
   })
 );
 
