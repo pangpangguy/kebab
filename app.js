@@ -4,10 +4,15 @@ const path = require("path");
 const Kebab = require("./models/kebab");
 const methodOverride = require("method-override");
 const ejsMate = require("ejs-mate");
-const catchAsync = require("./utils/catchAsync");
+const session = require("express-session");
+const flash = require("connect-flash");
+
+//utility
 const ExpressError = require("./utils/ExpressError");
-const { kebabSchema, reviewSchema } = require("./schemas.js");
-const Review = require("./models/review");
+
+//Routers
+const kebabsRouter = require("./routes/kebab");
+const reviewsRouter = require("./routes/review");
 
 //Database
 mongoose.connect("mongodb://localhost:27017/kebab-camp", {
@@ -15,137 +20,52 @@ mongoose.connect("mongodb://localhost:27017/kebab-camp", {
   useUnifiedTopology: true,
   useCreateIndex: true,
 });
-
 const db = mongoose.connection;
 db.on("error", console.error.bind(console, "Connection failed"));
 db.once("open", () => {
   console.log("Kebab database connected");
 });
 
-//The app initialization
+//App initialization
 const app = express();
 
 //use ejs-mate as ejs engine instead of default
 app.engine("ejs", ejsMate);
-
 app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "views"));
 
 app.use(express.urlencoded({ extended: true }));
 app.use(methodOverride("_method"));
 
-const validateKebab = (req, res, next) => {
-  const validationError = kebabSchema.validate(req.body);
-  if (validationError.error) {
-    //console.log(validationError);
-    //error.details is an array of objects. We take the message attribute
-    //of each object and join them into a string with ','
-    const errorMessage = validationError.error.details.map((el) => el.message).join(",");
-    throw new ExpressError(errorMessage, 400);
-  } else {
-    next();
-  }
-};
+//Static files
+app.use(express.static(path.join(__dirname, "public")));
 
-const validateReview = (req, res, next) => {
-  const { error } = reviewSchema.validate(req.body);
-  if (error) {
-    const errorMessage = validationError.error.details.map((el) => el.message).join(",");
-    throw new ExpressError(errorMessage, 400);
-  } else {
-    next();
-  }
+//Session. (Note: Make sure this comes before the routers!)
+const sessionConfig = {
+  secret: "somesecretforsessionnotsafe",
+  resave: false,
+  saveUninitialized: true,
+  cookie: {
+    httpOnly: true,
+    expire: Date.now() + 1000 * 60 * 60 * 24 * 7, //1 week from now
+  },
 };
+app.use(session(sessionConfig));
+app.use(flash());
+app.use((req, res, next) => {
+  res.locals.success = req.flash("success");
+  res.locals.error = req.flash("error");
+  next();
+});
 
-//HTTP Requests
+//HTTP Requests...
+
+//Use the kebab router, and prefixe everything with /kebabs
+app.use("/kebabs", kebabsRouter);
+app.use("/kebabs/:id/reviews", reviewsRouter);
 app.get("/", (req, res) => {
   res.render("home");
 });
-
-app.get("/kebabs", async (req, res) => {
-  const allKebabs = await Kebab.find({});
-  res.render("kebabs/index", { allKebabs });
-});
-
-app.get("/kebabs/new", (req, res) => {
-  res.render("kebabs/new");
-});
-
-app.get(
-  "/kebabs/:id",
-  catchAsync(async (req, res) => {
-    const { id } = req.params;
-    const kebab = await Kebab.findById(id).populate("reviews");
-    res.render("kebabs/show", { kebab });
-  })
-);
-
-app.post(
-  "/kebabs",
-  validateKebab,
-  catchAsync(async (req, res, next) => {
-    //if (!req.body.kebab) {
-    //throw new ExpressError("Invalid kebab data", 400);
-    //}
-    const newKebab = new Kebab(req.body.kebab);
-    await newKebab.save();
-    res.redirect("/kebabs");
-  })
-);
-
-app.get(
-  "/kebabs/:id/edit",
-  catchAsync(async (req, res) => {
-    const { id } = req.params;
-    const kebab = await Kebab.findById(id);
-    res.render("kebabs/edit", { kebab });
-  })
-);
-
-app.put(
-  "/kebabs/:id",
-  validateKebab,
-  catchAsync(async (req, res) => {
-    const { id } = req.params;
-    const updatedKebab = await Kebab.findByIdAndUpdate(id, { ...req.body.kebab });
-    res.redirect(`/kebabs/${updatedKebab._id}`);
-  })
-);
-
-app.delete(
-  "/kebabs/:id",
-  catchAsync(async (req, res) => {
-    const { id } = req.params;
-    await Kebab.findByIdAndDelete(id);
-    res.redirect("/kebabs");
-  })
-);
-
-//Reviews
-app.post(
-  "/kebabs/:id/reviews",
-  catchAsync(async (req, res) => {
-    const { id } = req.params;
-    const review = new Review(req.body.review);
-    const kebab = await Kebab.findById(id);
-    kebab.reviews.push(review);
-    await review.save();
-    await kebab.save();
-    res.redirect(`/kebabs/${id}`);
-  })
-);
-
-app.delete(
-  "/kebabs/:id/reviews/:reviewId",
-  catchAsync(async (req, res) => {
-    const { id, reviewId } = req.params;
-    //$pull : {x: y}
-    //Pull all elements from x that matches y
-    await Kebab.findByIdAndUpdate(id, { $pull: { reviews: reviewId } });
-    await Review.findByIdAndDelete(reviewId);
-    res.redirect(`/kebabs/${id}`);
-  })
-);
 
 //This runs if nothing matches
 app.all("*", (req, res, next) => {
